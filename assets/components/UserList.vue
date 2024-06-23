@@ -1,23 +1,24 @@
 <template>
     <div>
       <h1>User List</h1>
-      
+      <div>
+        <input v-model="searchTerm" placeholder="Search users..." @input="fetchUsers">
+      </div>
       <div>
         <label for="sortColumn">Sort by:</label>
-        <select id="sortColumn" v-model="sortColumn">
+        <select id="sortColumn" v-model="sortColumn" @change="fetchUsers">
           <option value="firstName">First Name</option>
           <option value="lastName">Last Name</option>
           <option value="userEmail">Email</option>
           <option value="id">ID</option>
           <option value="createdAt">Created At</option>
         </select>
-        <select v-model="sortOrder">
+        <select v-model="sortOrder" @change="fetchUsers">
           <option value="asc">Ascending</option>
           <option value="desc">Descending</option>
         </select>
         <button @click="fetchUsers">Sort</button>
       </div>
-      
       <ul>
         <li v-for="user in users" :key="user.id">
           {{ user.firstName }} {{ user.lastName }} ({{ user.userEmail }})
@@ -27,8 +28,6 @@
       </ul>
   
       <button @click="showAddModal = true">Add User</button>
-  
-      <!-- Modal for Add or Edit User -->
       <div v-if="showAddModal">
         <h2>{{ editMode ? 'Edit User' : 'Add User' }}</h2>
         <form @submit.prevent="editMode ? updateUser() : addUser()">
@@ -57,7 +56,8 @@
         },
         selectedUserId: null,
         sortColumn: 'firstName',
-        sortOrder: 'asc'
+        sortOrder: 'asc',
+        searchTerm: '' // Add search term to data
       };
     },
     created() {
@@ -70,7 +70,10 @@
             params: {
               order: {
                 [this.sortColumn]: this.sortOrder
-              }
+              },
+              userEmail: this.searchTerm, // Add search term to request parameters
+              firstName: this.searchTerm,
+              lastName: this.searchTerm
             }
           });
           this.users = response.data['hydra:member'];
