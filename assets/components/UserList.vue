@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1>User List</h1>
+      <h1 class="userList">User List</h1>
       <div>
         <input v-model="searchTerm" placeholder="Search users..." @input="updateSearch">
       </div>
@@ -23,7 +23,7 @@
         <li v-for="user in users" :key="user.id">
           {{ user.firstName }} {{ user.lastName }} ({{ user.userEmail }})
           <button @click="editUser(user)">Edit</button>
-          <button @click="deleteUser(user)">Delete</button>
+          <button @click="confirmDelete(user)">Delete</button>
         </li>
       </ul>
 
@@ -34,16 +34,40 @@
       </div>
 
   
-      <button @click="showAddModal = true">Add User</button>
-      <div v-if="showAddModal">
-        <h2>{{ editMode ? 'Edit User' : 'Add User' }}</h2>
-        <form @submit.prevent="editMode ? updateUser() : addUser()">
-          <input v-model="formData.firstName" placeholder="First Name" required>
-          <input v-model="formData.lastName" placeholder="Last Name" required>
-          <input v-model="formData.userEmail" placeholder="Email" required>
-          <button type="submit">{{ editMode ? 'Update' : 'Add' }}</button>
-        </form>
+        <button @click="showAddModal = true">Add User</button>
+        <div v-if="showAddModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>{{ editMode ? 'Edit User' : 'Add User' }}</h2>
+                    <span class="close" @click="closeModal">&times;</span>
+                </div>
+                <form @submit.prevent="editMode ? updateUser() : addUser()">
+                <input v-model="formData.firstName" placeholder="First Name" required>
+                <input v-model="formData.lastName" placeholder="Last Name" required>
+                <input v-model="formData.userEmail" placeholder="Email" required>
+                <div class="modal-footer">
+                    <button type="submit">{{ editMode ? 'Update' : 'Add' }}</button>
+                    <button type="button" @click="closeModal">Cancel</button>
+                </div>
+                </form>
+            </div>
       </div>
+
+      <div v-if="showDeleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h2>Delete User</h2>
+            <span class="close" @click="closeDeleteModal">&times;</span>
+            </div>
+            <div class="modal-body">
+            <p>Are you sure you want to delete this user {{ selectedUser.firstName }} {{ selectedUser.lastName }}?</p>
+            </div>
+            <div class="modal-footer">
+            <button @click="deleteConfirmed(selectedUser)" class="delete-btn">Delete</button>
+            <button @click="closeDeleteModal" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
     </div>
   </template>
   
@@ -55,6 +79,7 @@
       return {
         users: [],
         showAddModal: false,
+        showDeleteModal: false,
         editMode: false,
         formData: {
           firstName: '',
@@ -136,6 +161,7 @@
       async deleteUser(user) {
         try {
           await axios.delete(`http://127.0.0.1:8000/api/users/${user.id}`, this.axiosConfig);
+          this.closeDeleteModal();
           this.fetchUsers();
         } catch (error) {
           console.error('Error deleting user:', error);
@@ -150,105 +176,47 @@
           userEmail: ''
         };
       },
+        closeDeleteModal() {
+            this.showDeleteModal = false;
+        },
       prevPage() {
         if (this.currentPage > 1) {
             this.currentPage--;
+            localStorage.setItem('currentPage', this.currentPage);
             this.fetchUsers();
         }
       },
         nextPage() {
         if (this.currentPage < this.totalPages) {
             this.currentPage++;
+            localStorage.setItem('currentPage', this.currentPage);
             this.fetchUsers();
         }
         },
       updateSorting() {
         localStorage.setItem('sortColumn', this.sortColumn);
         localStorage.setItem('sortOrder', this.sortOrder);
+        this.currentPage = 1;
+        localStorage.setItem('currentPage', this.currentPage);
         this.fetchUsers();
       },
       updateSearch() {
         localStorage.setItem('searchTerm', this.searchTerm);
+        this.currentPage = 1; 
+        localStorage.setItem('currentPage', this.currentPage);
         this.fetchUsers();
-      }
+      },
+        confirmDelete(user) {
+            this.selectedUser = user;
+            this.showDeleteModal = true;
+        },
+        deleteConfirmed(user) {
+            this.deleteUser(user);
+    }
     }
   };
   </script>
   
-  <style scoped lang="scss">
-  /* Add some basic styles */
-  h1 {
-    font-size: 2em;
-    margin-bottom: 0.5em;
-  }
-  
-  div {
-    margin-bottom: 1em;
-  }
-  
-  input {
-    padding: 0.5em;
-    margin-right: 1em;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  select {
-    padding: 0.5em;
-    margin-right: 1em;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  button {
-    padding: 0.5em 1em;
-    border: none;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  li {
-    margin-bottom: 0.5em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  li button {
-    margin-left: 0.5em;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  form input {
-    margin-bottom: 0.5em;
-  }
-  
-  form button {
-    align-self: flex-start;
-  }
-  
-  .pagination {
-    display: flex;
-    justify-content: center;
-  }
-  
-  .pagination button {
-    margin: 0 0.25em;
-  }
-  </style>
+<style scoped>
+</style>
   
