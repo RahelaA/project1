@@ -124,7 +124,6 @@
     methods: {
       async fetchUsers() {
         try {
-
           const response = await axios.get('http://127.0.0.1:8000/api/users', {
             params: {
               page: this.currentPage, 
@@ -132,8 +131,8 @@
                 [this.sortColumn]: this.sortOrder
               },
               userEmail: this.searchTerm,
-              firstName: this.searchTerm,
-              lastName: this.searchTerm,
+              firstName: { $iLike: `%${this.searchTerm}%` },
+              lastName: { $iLike: `%${this.searchTerm}%` },
               page: this.currentPage,
               itemsPerPage: this.itemsPerPage
             }
