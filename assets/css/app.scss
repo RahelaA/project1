@@ -1,28 +1,42 @@
-/* app.scss */
-
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
     padding: 20px;
-  }
-  
-  .userList {
-    color: aquamarine;
-    font-size: 2em;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
-  }
-  
-  input[type="text"], select {
+}
+
+.sort-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+input[type="text"], select {
     padding: 10px;
     margin: 10px 0;
     width: 100%;
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 4px;
-  }
-  
-  button {
+}
+
+.add-user-container.add-btn {
+    width: 100%;
+}
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
     padding: 10px 15px;
     margin: 5px;
     border: none;
@@ -30,22 +44,22 @@ body {
     background-color: #28a745;
     color: white;
     cursor: pointer;
-  }
+}
   
-  button:disabled {
+button:disabled {
     background-color: #ccc;
-  }
+}
   
-  button:hover:not(:disabled) {
+button:hover:not(:disabled) {
     background-color: #218838;
-  }
+}
   
-  ul {
+ul {
     list-style-type: none;
     padding: 0;
-  }
+}
   
-  li {
+li {
     background-color: white;
     padding: 15px;
     margin-bottom: 10px;
@@ -54,30 +68,29 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
+}
   
-  form {
+form {
     display: flex;
     flex-direction: column;
-  }
+}
   
-  form input {
+form input {
     margin-bottom: 10px;
-  }
+}
   
-  form button {
+form button {
     align-self: flex-end;
-  }
+}
   
-  .pagination {
+.pagination {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 20px;
-  }
-  
-  /* Modal styling */
-  .modal {
+}
+
+.modal {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -89,37 +102,91 @@ body {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.5);
-  }
+}
   
-  .modal-content {
+.modal-content {
     background-color: #fff;
     padding: 20px;
     border: 1px solid #888;
     border-radius: 4px;
     width: 400px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  }
-  
-  .modal-header, .modal-footer {
+}
+
+.modal-header, .modal-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  
-  .modal-header h2 {
+}
+
+.modal-header h2 {
     margin: 0;
-  }
+}
   
-  .close {
+.close {
     color: #aaa;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
-  }
-  
-  .close:hover, .close:focus {
+}
+
+.close:hover, .close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
-  }
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-actions .edit-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.user-actions .delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.user-actions .edit-btn:hover {
+    background-color: #0056b3;
+}
+
+.user-actions .delete-btn:hover {
+    background-color: #c82333;
+}
+
+.user-list-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
   
+.user-list-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+  
+.search-container {
+    text-align: right;
+    margin-bottom: 20px;
+}

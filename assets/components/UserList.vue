@@ -1,40 +1,45 @@
 <template>
-    <div>
-      <h1 class="userList">User List</h1>
-      <div>
-        <input v-model="searchTerm" placeholder="Search users..." @input="updateSearch">
-      </div>
-      <div>
-        <label for="sortColumn">Sort by:</label>
-        <select id="sortColumn" v-model="sortColumn" @change="updateSorting">
-          <option value="firstName">First Name</option>
-          <option value="lastName">Last Name</option>
-          <option value="userEmail">Email</option>
-          <option value="id">ID</option>
-          <option value="createdAt">Created At</option>
-        </select>
-        <select v-model="sortOrder" @change="updateSorting">
-          <option value="asc">Ascending</option>
-          <option value="desc">Descending</option>
-        </select>
-        <button @click="fetchUsers">Sort</button>
-      </div>
-      <ul>
-        <li v-for="user in users" :key="user.id">
-          {{ user.firstName }} {{ user.lastName }} ({{ user.userEmail }})
-          <button @click="editUser(user)">Edit</button>
-          <button @click="confirmDelete(user)">Delete</button>
-        </li>
-      </ul>
+    <div class="user-list-container">
+        <div class="filter-container">
+            <h1 class="user-list-title">User List</h1>
+            <div class="search-container">
+                <input v-model="searchTerm" placeholder="Search users..." @input="updateSearch">
+            </div>
+            <div class="sort-container">
+                <label for="sortColumn">Sort by:</label>
+                <select id="sortColumn" v-model="sortColumn" @change="updateSorting">
+                    <option value="firstName">First Name</option>
+                    <option value="lastName">Last Name</option>
+                    <option value="userEmail">Email</option>
+                    <option value="id">ID</option>
+                    <option value="createdAt">Created At</option>
+                </select>
+                <select v-model="sortOrder" @change="updateSorting">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+                </select>
+                <button @click="fetchUsers">Sort</button>
+            </div>
+        </div>
 
-      <div>
-        <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
-      </div>
+        <div class="user-list">
+            <ul>
+                <li v-for="user in users" :key="user.id">
+                <div class="user-info">
+                <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+                <span class="user-email">({{ user.userEmail }})</span>
+                </div>
+                <div class="user-actions">
+                <button @click="editUser(user)" class="edit-btn">Edit</button>
+                <button @click="confirmDelete(user)" class="delete-btn">Delete</button>
+                </div>
+                </li>
+            </ul>
+        </div>
+        <div class="add-user-container">
+            <button @click="showAddModal = true" class="add-btn">Add User</button>
+        </div>
 
-  
-        <button @click="showAddModal = true">Add User</button>
         <div v-if="showAddModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -42,34 +47,40 @@
                     <span class="close" @click="closeModal">&times;</span>
                 </div>
                 <form @submit.prevent="editMode ? updateUser() : addUser()">
-                <input v-model="formData.firstName" placeholder="First Name" required>
-                <input v-model="formData.lastName" placeholder="Last Name" required>
-                <input v-model="formData.userEmail" placeholder="Email" required>
-                <div class="modal-footer">
-                    <button type="submit">{{ editMode ? 'Update' : 'Add' }}</button>
-                    <button type="button" @click="closeModal">Cancel</button>
-                </div>
+                    <input v-model="formData.firstName" placeholder="First Name" required>
+                    <input v-model="formData.lastName" placeholder="Last Name" required>
+                    <input v-model="formData.userEmail" placeholder="Email" required>
+                    <div class="modal-footer">
+                        <button type="submit">{{ editMode ? 'Update' : 'Add' }}</button>
+                        <button type="button" @click="closeModal">Cancel</button>
+                    </div>
                 </form>
             </div>
-      </div>
+        </div>
 
-      <div v-if="showDeleteModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h2>Delete User</h2>
-            <span class="close" @click="closeDeleteModal">&times;</span>
-            </div>
-            <div class="modal-body">
-            <p>Are you sure you want to delete this user {{ selectedUser.firstName }} {{ selectedUser.lastName }}?</p>
-            </div>
-            <div class="modal-footer">
-            <button @click="deleteConfirmed(selectedUser)" class="delete-btn">Delete</button>
-            <button @click="closeDeleteModal" class="cancel-btn">Cancel</button>
+        <div v-if="showDeleteModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Delete User</h2>
+                    <span class="close" @click="closeDeleteModal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this user {{ selectedUser.firstName }} {{ selectedUser.lastName }}?</p>
+                </div>
+                <div class="modal-footer">
+                    <button @click="deleteConfirmed(selectedUser)" class="delete-btn">Delete</button>
+                    <button @click="closeDeleteModal" class="cancel-btn">Cancel</button>
+                </div>
             </div>
         </div>
+
+        <div class="pagination-container">
+            <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
+            <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+        </div>
     </div>
-    </div>
-  </template>
+</template>
   
   <script>
   import axios from 'axios';
